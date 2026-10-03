@@ -1,0 +1,13 @@
+# ApplyOnce has ZERO third-party dependencies by design.
+#
+# Everything runs on the Python standard library:
+#   * api/yc.py, serve.py, scrape_batch.py, enrich_apify.py -> urllib, json, csv, http.server
+#   * index.html -> vanilla JS, no build step, no bundler, no CDN
+#
+# The only credential the tool can ever use is an Apify token that YOU supply
+# at runtime through the browser UI (web app) or the APIFY_TOKEN environment
+# variable (CLI). It is never written to disk by this project.
+#
+# This file exists so that `pip install -r requirements.txt` succeeds and to
+# document the empty dependency set. Do not add packages here without also
+# removing the "no external dependencies" claim from README.md.

@@ -1,0 +1,1646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>ApplyOnce &middot; YC founder outreach</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0d12'/%3E%3Cpath d='M8 21.5 14 11l4 6.5L20.5 13l3.5 8.5' stroke='%2361d0a8' stroke-width='2.4' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+
+<style>
+/* ==========================================================================
+   Design tokens. One place to retune the whole look.
+   ========================================================================== */
+:root {
+  --bg:        #0b0d12;
+  --bg-2:      #11141c;
+  --bg-3:      #161a24;
+  --bg-4:      #1c2130;
+  --line:      #262c3a;
+  --line-2:    #333b4d;
+  --fg:        #e6e9f0;
+  --fg-2:      #a3abbd;
+  --fg-3:      #6b7488;
+  --accent:    #61d0a8;
+  --accent-dim:#2a5c4c;
+  --blue:      #6aa9ff;
+  --amber:     #f0b429;
+  --red:       #ff6b6b;
+  --violet:    #b18cff;
+  --radius:    10px;
+  --radius-sm: 7px;
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font: 14px/1.55 var(--sans);
+  -webkit-font-smoothing: antialiased;
+  padding-bottom: 96px;
+}
+
+a { color: var(--blue); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ---------- layout ---------- */
+
+.wrap { max-width: 1080px; margin: 0 auto; padding: 0 20px; }
+
+header.top {
+  border-bottom: 1px solid var(--line);
+  background: linear-gradient(180deg, var(--bg-2), var(--bg));
+  position: sticky; top: 0; z-index: 50;
+}
+header.top .wrap {
+  display: flex; align-items: center; gap: 16px;
+  padding-top: 14px; padding-bottom: 14px; flex-wrap: wrap;
+}
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 650; letter-spacing: -.2px; }
+.brand svg { display: block; }
+.brand .sub { color: var(--fg-3); font-weight: 400; font-size: 12.5px; }
+.spacer { flex: 1; }
+
+.stats { display: flex; gap: 16px; font-size: 12.5px; color: var(--fg-2); }
+.stats b { color: var(--fg); font-variant-numeric: tabular-nums; }
+
+section.card {
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  margin: 18px 0;
+  overflow: hidden;
+}
+section.card > h2 {
+  margin: 0; padding: 14px 18px;
+  font-size: 13px; font-weight: 600; letter-spacing: .3px; text-transform: uppercase;
+  color: var(--fg-2);
+  border-bottom: 1px solid var(--line);
+  display: flex; align-items: center; gap: 10px;
+}
+section.card > h2 .hint { font-weight: 400; text-transform: none; letter-spacing: 0; color: var(--fg-3); font-size: 12.5px; }
+section.card .body { padding: 18px; }
+section.card .body.tight { padding: 12px 18px; }
+
+/* ---------- form controls ---------- */
+
+label.field { display: block; margin-bottom: 12px; }
+label.field > .lab {
+  display: block; font-size: 12px; color: var(--fg-2);
+  margin-bottom: 5px; letter-spacing: .2px;
+}
+label.field > .lab .k { font-family: var(--mono); color: var(--accent); font-size: 11.5px; }
+
+input[type=text], input[type=password], textarea, select {
+  width: 100%;
+  background: var(--bg-3);
+  border: 1px solid var(--line-2);
+  color: var(--fg);
+  border-radius: var(--radius-sm);
+  padding: 9px 11px;
+  font: 13.5px var(--sans);
+  outline: none;
+  transition: border-color .12s, box-shadow .12s;
+}
+input:focus, textarea:focus, select:focus {
+  border-color: var(--accent-dim);
+  box-shadow: 0 0 0 3px rgba(97,208,168,.10);
+}
+textarea { font-family: var(--mono); font-size: 12.8px; line-height: 1.6; resize: vertical; }
+select { cursor: pointer; }
+::placeholder { color: var(--fg-3); }
+
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 14px; }
+.grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0 14px; }
+@media (max-width: 640px) { .grid2, .grid3 { grid-template-columns: 1fr; } }
+
+button {
+  background: var(--bg-4);
+  border: 1px solid var(--line-2);
+  color: var(--fg);
+  border-radius: var(--radius-sm);
+  padding: 8px 13px;
+  font: 500 13px var(--sans);
+  cursor: pointer;
+  transition: background .12s, border-color .12s, opacity .12s;
+  white-space: nowrap;
+}
+button:hover:not(:disabled) { background: #232a3b; border-color: #414b62; }
+button:disabled { opacity: .45; cursor: not-allowed; }
+button.primary { background: var(--accent); border-color: var(--accent); color: #06251b; font-weight: 600; }
+button.primary:hover:not(:disabled) { background: #74dcb8; border-color: #74dcb8; }
+button.ghost { background: transparent; }
+button.tiny { padding: 3px 8px; font-size: 11.5px; border-radius: 5px; }
+button.danger:hover:not(:disabled) { border-color: var(--red); color: var(--red); }
+
+.row { display: flex; gap: 9px; align-items: center; flex-wrap: wrap; }
+.row.tight { gap: 6px; }
+
+/* ---------- placeholder chips ---------- */
+
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.chip {
+  font-family: var(--mono); font-size: 11.5px;
+  background: var(--bg-3); border: 1px solid var(--line-2);
+  color: var(--fg-2); border-radius: 20px; padding: 3px 10px;
+  cursor: pointer; transition: all .12s;
+}
+.chip:hover { color: var(--accent); border-color: var(--accent-dim); background: rgba(97,208,168,.07); }
+
+.check { display: inline-flex; align-items: center; gap: 7px; font-size: 12.8px; color: var(--fg-2); cursor: pointer; }
+.check input { accent-color: var(--accent); width: 14px; height: 14px; cursor: pointer; }
+
+/* ---------- badges ---------- */
+
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 10.5px; font-weight: 600; letter-spacing: .3px; text-transform: uppercase;
+  padding: 2px 7px; border-radius: 4px; border: 1px solid; white-space: nowrap;
+}
+.b-verified   { color: var(--accent);  border-color: var(--accent-dim); background: rgba(97,208,168,.10); }
+.b-unverified { color: var(--amber);   border-color: #5c4415;          background: rgba(240,180,41,.10); }
+.b-site       { color: var(--blue);    border-color: #244063;          background: rgba(106,169,255,.10); }
+.b-guess      { color: var(--fg-2);    border-color: var(--line-2);     background: var(--bg-4); }
+.b-none       { color: var(--red);     border-color: #5c2323;          background: rgba(255,107,107,.08); }
+.b-sent       { color: var(--violet);  border-color: #47336e;          background: rgba(177,140,255,.10); }
+
+.pill {
+  font-size: 11px; color: var(--fg-3); background: var(--bg-4);
+  border: 1px solid var(--line); border-radius: 4px; padding: 1px 6px;
+}
+
+/* ---------- company cards ---------- */
+
+.company {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg-3);
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+.company.is-sent { opacity: .5; }
+.company.is-hidden { opacity: .45; }
+
+.company > .chead {
+  display: flex; align-items: flex-start; gap: 12px; padding: 13px 15px;
+}
+.logo {
+  width: 34px; height: 34px; border-radius: 7px; flex: 0 0 34px;
+  object-fit: contain; background: var(--bg-4);
+}
+.logo.ph { display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 14px; color: var(--fg-3); }
+
+.cmain { flex: 1; min-width: 0; }
+.cname { font-weight: 600; font-size: 14.5px; letter-spacing: -.15px; }
+.cname a { color: var(--fg); }
+.cname a:hover { color: var(--accent); text-decoration: none; }
+.cone { color: var(--fg-2); font-size: 12.8px; margin-top: 2px; }
+.cmeta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; align-items: center; }
+
+.cfounder {
+  border-top: 1px solid var(--line);
+  padding: 11px 15px;
+  background: rgba(0,0,0,.13);
+}
+.frow { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
+.cfsum   { padding: 0 15px 10px; }
+.fname { font-weight: 550; font-size: 13.5px; }
+.ftitle { color: var(--fg-3); font-size: 12px; }
+.femail { font-family: var(--mono); font-size: 12.5px; color: var(--fg); }
+.femail.none { color: var(--fg-3); font-style: italic; }
+.fico { color: var(--fg-3); font-size: 11.5px; text-decoration: none; border: 1px solid var(--line-2);
+  border-radius: 4px; padding: 1px 5px; }
+.fico:hover { color: var(--blue); border-color: var(--blue); text-decoration: none; }
+
+.draft {
+  margin-top: 10px; border-top: 1px dashed var(--line-2); padding-top: 10px;
+}
+.draft .dsub {
+  font-size: 12px; color: var(--fg-2); margin-bottom: 6px; word-break: break-word;
+}
+.draft .dsub b { color: var(--fg); }
+.dbody {
+  font-family: var(--mono); font-size: 12.2px; line-height: 1.62;
+  white-space: pre-wrap; word-break: break-word;
+  background: var(--bg); border: 1px solid var(--line);
+  border-radius: var(--radius-sm); padding: 10px 12px; color: var(--fg-2);
+  max-height: 320px; overflow: auto;
+}
+.dactions { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 9px; }
+
+.guesses { margin-top: 7px; display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
+.guesses .g {
+  font-family: var(--mono); font-size: 11px; color: var(--fg-3);
+  background: var(--bg-4); border: 1px solid var(--line);
+  border-radius: 4px; padding: 1px 6px; cursor: pointer;
+}
+.guesses .g:hover { color: var(--accent); border-color: var(--accent-dim); }
+
+/* ---------- misc ---------- */
+
+.empty { text-align: center; color: var(--fg-3); padding: 46px 20px; }
+.empty .big { font-size: 15px; color: var(--fg-2); margin-bottom: 6px; }
+
+.progress { height: 3px; background: var(--bg-4); border-radius: 2px; overflow: hidden; margin-top: 10px; }
+.progress > i { display: block; height: 100%; background: var(--accent); transition: width .2s; }
+
+.skel { color: var(--fg-3); font-size: 12.5px; font-style: italic; }
+
+#toasts {
+  position: fixed; right: 16px; bottom: 16px; z-index: 200;
+  display: flex; flex-direction: column; gap: 8px; max-width: 340px;
+}
+.toast {
+  background: var(--bg-4); border: 1px solid var(--line-2);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius-sm); padding: 10px 13px;
+  font-size: 12.8px; box-shadow: 0 8px 24px rgba(0,0,0,.45);
+  animation: slidein .18s ease-out;
+}
+.toast.err { border-left-color: var(--red); }
+.toast.warn { border-left-color: var(--amber); }
+@keyframes slidein { from { opacity: 0; transform: translateX(14px); } }
+
+details.apify > summary {
+  cursor: pointer; font-size: 13px; font-weight: 600; letter-spacing: .3px;
+  text-transform: uppercase; color: var(--fg-2);
+  padding: 14px 18px; border-bottom: 1px solid var(--line);
+  list-style: none; display: flex; align-items: center; gap: 8px;
+}
+details.apify > summary::-webkit-details-marker { display: none; }
+details.apify > summary::before { content: "▸"; color: var(--fg-3); font-size: 11px; }
+details.apify[open] > summary::before { content: "▾"; }
+
+.note { font-size: 12px; color: var(--fg-3); line-height: 1.5; margin-top: 8px; }
+.note code { font-family: var(--mono); background: var(--bg-4); padding: 1px 4px; border-radius: 3px; }
+.ok { color: var(--accent); }
+.warn { color: var(--amber); }
+.err { color: var(--red); }
+</style>
+</head>
+
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand">
+      <svg width="22" height="22" viewBox="0 0 32 32" aria-hidden="true">
+        <rect width="32" height="32" rx="7" fill="#161a24"/>
+        <path d="M8 21.5 14 11l4 6.5L20.5 13l3.5 8.5" stroke="#61d0a8" stroke-width="2.4"
+              fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>ApplyOnce</span>
+      <span class="sub">YC founder outreach</span>
+    </div>
+    <div class="spacer"></div>
+    <div class="stats" id="stats"></div>
+    <button class="tiny ghost danger" id="btnReset" title="Delete everything stored in this browser">Reset</button>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- ======================= 1. Your details ======================= -->
+  <section class="card">
+    <h2>Your details <span class="hint">used by {my_name} and friends in the template</span></h2>
+    <div class="body">
+      <div class="grid2">
+        <label class="field">
+          <span class="lab">Name <span class="k">{my_name}</span></span>
+          <input type="text" id="my_name" data-bind="details.my_name" placeholder="Ada Lovelace" autocomplete="name">
+        </label>
+        <label class="field">
+          <span class="lab">Portfolio / website <span class="k">{portfolio}</span></span>
+          <input type="text" id="portfolio" data-bind="details.portfolio" placeholder="https://ada.dev">
+        </label>
+        <label class="field">
+          <span class="lab">GitHub <span class="k">{github}</span></span>
+          <input type="text" id="github" data-bind="details.github" placeholder="https://github.com/ada">
+        </label>
+        <label class="field">
+          <span class="lab">Resume <span class="k">{resume}</span></span>
+          <input type="text" id="resume" data-bind="details.resume" placeholder="https://ada.dev/cv.pdf">
+        </label>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= 2. Email template ======================= -->
+  <section class="card">
+    <h2>Email template <span class="hint">one template, personalised per founder</span></h2>
+    <div class="body">
+      <div class="chips" id="chips"></div>
+
+      <label class="field">
+        <span class="lab">Subject</span>
+        <input type="text" id="subject" data-bind="template.subject" placeholder="{first_name} — question about {company}">
+      </label>
+
+      <label class="field">
+        <span class="lab">Body</span>
+        <textarea id="body" data-bind="template.body" rows="12" spellcheck="false"></textarea>
+      </label>
+
+      <div class="row">
+        <label class="check">
+          <input type="checkbox" id="dropEmpty" data-bind="template.dropEmptyLines">
+          Drop lines whose fields are empty
+        </label>
+        <span class="spacer"></span>
+        <label class="check">
+          <input type="checkbox" id="showGuesses" data-bind="ui.showAllGuesses">
+          Show every guessed address
+        </label>
+        <button class="tiny ghost" id="btnResetTpl">Reset template</button>
+      </div>
+      <p class="note" id="tplNote"></p>
+    </div>
+  </section>
+
+  <!-- ======================= 3. Batch ======================= -->
+  <section class="card">
+    <h2>Batch <span class="hint" id="batchSource"></span></h2>
+    <div class="body">
+      <div class="row">
+        <select id="batchSelect" style="flex:1;min-width:230px"><option>Loading batches…</option></select>
+        <button class="primary" id="btnLoad">Load companies</button>
+        <button id="btnMore" disabled>Load more (+20)</button>
+        <span class="spacer"></span>
+        <label class="check">
+          <input type="checkbox" id="autoFounders" data-bind="ui.autoFounders">
+          Auto-load founders
+        </label>
+      </div>
+
+      <div class="progress" id="progWrap" style="display:none"><i id="progBar"></i></div>
+      <p class="note" id="loadNote"></p>
+
+      <div class="row" style="margin-top:14px">
+        <input type="text" id="search" data-bind="ui.query" placeholder="Filter loaded companies by name, tag or founder…" style="flex:1;min-width:220px">
+        <div class="row tight" id="filters">
+          <button class="tiny" data-filter="all">All</button>
+          <button class="tiny" data-filter="unsigned">Unsigned</button>
+          <button class="tiny" data-filter="emails">Has email</button>
+          <button class="tiny" data-filter="noemail">No email</button>
+          <button class="tiny" data-filter="sent">Sent</button>
+          <button class="tiny" data-filter="hidden" id="filterHidden" hidden>Hidden</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= 4. Companies ======================= -->
+  <section class="card">
+    <h2>Companies <span class="hint" id="listHint"></span></h2>
+    <div class="body tight">
+      <div id="list"><div class="empty"><div class="big">Nothing loaded yet</div>
+        Pick a batch above and press <b>Load companies</b>.</div></div>
+    </div>
+  </section>
+
+  <!-- ======================= 5. Apify ======================= -->
+  <section class="card">
+    <details class="apify" id="apifyBox">
+      <summary>Verified email lookup (optional, uses your own Apify token)</summary>
+      <div class="body">
+        <div class="grid2">
+          <label class="field">
+            <span class="lab">Apify token</span>
+            <input type="password" id="apifyToken" data-bind="apify.token" placeholder="apify_api_…" autocomplete="off">
+          </label>
+          <label class="field">
+            <span class="lab">Actor</span>
+            <input type="text" id="apifyActor" data-bind="apify.actor" placeholder="automation-lab/email-enrichment">
+          </label>
+        </div>
+        <div class="grid3">
+          <label class="field">
+            <span class="lab">Verification level</span>
+            <select id="apifyLevel" data-bind="apify.level">
+              <option value="format">format — syntax only (free)</option>
+              <option value="mx">mx — DNS + catch-all</option>
+              <option value="smtp">smtp — real mailbox check</option>
+            </select>
+          </label>
+          <label class="field">
+            <span class="lab">Patterns per person</span>
+            <input type="text" id="apifyPatterns" data-bind="apify.maxPatterns" inputmode="numeric">
+          </label>
+          <label class="field">
+            <span class="lab">&nbsp;</span>
+            <div class="row tight" style="padding-top:8px">
+              <button id="btnApifyTest">Test token</button>
+              <button class="primary" id="btnApifyRun">Enrich loaded</button>
+            </div>
+          </label>
+        </div>
+        <p class="note" id="apifyNote"></p>
+        <p class="note">
+          The token is stored only in this browser's localStorage and is sent
+          straight from your browser to <code>api.apify.com</code>. It never
+          touches the ApplyOnce server, and nothing about it is ever uploaded.
+          The default actor is a pay-per-event Actor (about $0.001 per run plus
+          $0.003 per email), so enrichment is billable &mdash; switch the level
+          to <code>format</code> if you only want syntax checks.
+        </p>
+      </div>
+    </details>
+  </section>
+</div>
+
+<div id="toasts"></div>
+
+<script>
+"use strict";
+/* ==========================================================================
+   ApplyOnce — single-file app. No frameworks, no build step.
+
+   Structure:
+     Store    – localStorage persistence (the only place user data lives)
+     render   – pure-ish DOM rendering for the company list
+     resolve  – the email ladder: Apify -> website -> pattern guesses
+     api      – calls to /api/yc (our serverless fn) and to Apify
+   ========================================================================== */
+
+/* ------------------------------------------------------------------ utils */
+
+const $  = (sel, root) => (root || document).querySelector(sel);
+const $$ = (sel, root) => Array.from((root || document).querySelectorAll(sel));
+
+/** Escape everything that came from the network or from the user. */
+function esc(value) {
+  return String(value == null ? "" : value)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+
+function toast(message, kind, ms) {
+  const el = document.createElement("div");
+  el.className = "toast" + (kind ? " " + kind : "");
+  el.textContent = message;
+  $("#toasts").appendChild(el);
+  setTimeout(() => {
+    el.style.opacity = "0";
+    el.style.transition = "opacity .3s";
+    setTimeout(() => el.remove(), 320);
+  }, ms || 4200);
+}
+
+async function copyText(text, label) {
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+    } else {
+      // file:// and plain http:// have no async clipboard.
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.cssText = "position:fixed;top:-9999px;opacity:0";
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      ta.remove();
+    }
+    toast((label || "Copied") + " to clipboard");
+  } catch (err) {
+    toast("Copy failed: " + err.message, "err");
+  }
+}
+
+function debounce(fn, ms) {
+  let timer = null;
+  return function () {
+    clearTimeout(timer);
+    const args = arguments;
+    timer = setTimeout(() => fn.apply(null, args), ms);
+  };
+}
+
+function get(obj, path) {
+  return path.split(".").reduce((o, k) => (o == null ? o : o[k]), obj);
+}
+function set(obj, path, value) {
+  const parts = path.split(".");
+  const last = parts.pop();
+  const target = parts.reduce((o, k) => (o[k] = o[k] || {}), obj);
+  target[last] = value;
+}
+
+/* ------------------------------------------------------------------ store */
+
+const STORE_KEY = "applyonce.v1";
+const PAGE_SIZE = 20;
+
+const DEFAULT_TEMPLATE = {
+  subject: "{first_name} — quick question about {company}",
+  body: [
+    "Hi {first_name},",
+    "",
+    "I'm {my_name}. I came across {company} — {one_liner}",
+    "",
+    "I'm working on tools for early-stage technical founders and would value",
+    "15 minutes of your time. What I like about {company} is the focus on",
+    "{tags}.",
+    "",
+    "GitHub: {github}",
+    "Portfolio: {portfolio}",
+    "Resume: {resume}",
+    "",
+    "Open to a short call this week?",
+    "",
+    "— {my_name}"
+  ].join("\n"),
+  dropEmptyLines: true
+};
+
+function blankState() {
+  return {
+    version: 1,
+    details: { my_name: "", portfolio: "", github: "", resume: "" },
+    template: Object.assign({}, DEFAULT_TEMPLATE),
+    apify: {
+      token: "",
+      actor: "automation-lab/email-enrichment",
+      level: "mx",
+      maxPatterns: 8,
+      // key: `${actor}|${level}|${first}|${last}|${domain}` -> apify record
+      results: {}
+    },
+    batches: {},     // batchName -> { offset, total, companies: {id: company} }
+    activeBatch: "",
+    sent: {},        // companyId -> { at, emails: [] }
+    hidden: [],      // companyIds
+    ui: {
+      filter: "all", query: "", autoFounders: true, showAllGuesses: false
+    }
+  };
+}
+
+let state = loadState();
+
+function loadState() {
+  const fresh = blankState();
+  let raw = null;
+  try {
+    raw = localStorage.getItem(STORE_KEY);
+  } catch (err) {
+    // Private browsing or a blocked origin: run in memory only.
+    return fresh;
+  }
+  if (!raw) return fresh;
+  try {
+    const saved = JSON.parse(raw);
+    // Shallow-merge so a schema addition in a later version does not wipe
+    // whatever the user already had.
+    const merged = Object.assign(fresh, saved);
+    merged.details = Object.assign(fresh.details, saved.details || {});
+    merged.template = Object.assign(fresh.template, saved.template || {});
+    merged.apify = Object.assign(fresh.apify, saved.apify || {});
+    merged.ui = Object.assign(fresh.ui, saved.ui || {});
+    return merged;
+  } catch (err) {
+    console.warn("could not parse saved state, starting fresh", err);
+    return fresh;
+  }
+}
+
+const saveNow = () => {
+  try {
+    localStorage.setItem(STORE_KEY, JSON.stringify(state));
+  } catch (err) {
+    toast(
+      "Could not save to localStorage — changes will be lost on refresh " +
+      "(storage may be full or blocked).",
+      "err", 8000
+    );
+  }
+};
+const save = debounce(saveNow, 300);
+
+/* ------------------------------------------------------- name + email utils
+   Mirrors split_name()/email_patterns()/guess_emails() from api/yc.py.
+   Kept in JS as well because drafts must render with the network down.
+   -------------------------------------------------------------------------- */
+
+const SUFFIXES = new Set(["jr","jr.","sr","sr.","ii","iii","iv","phd","ph.d.",
+  "md","m.d.","msc","m.s.","bsc","b.s.","esq","cpa","mba"]);
+const PARTICLES = new Set(["de","del","della","di","da","das","dos","du","van",
+  "von","der","den","ten","ter","la","le","el","al","bin","ibn","mac","mc","o",
+  "san"]);
+
+function cleanName(raw) {
+  let text = String(raw == null ? "" : raw).replace(/ /g, " ");
+  text = text.replace(/\s+/g, " ").trim();
+  text = text.replace(/\([^)]*\)|\[[^\]]*\]/g, "");
+  if (text.indexOf(",") !== -1) {
+    const chunks = text.split(",").map(s => s.trim()).filter(Boolean);
+    text = (chunks.length >= 2 && chunks[0].indexOf(" ") === -1)
+      ? chunks[1] + " " + chunks[0]
+      : (chunks[0] || "");
+  }
+  text = text.replace(/^(mr|mrs|ms|miss|dr|prof|professor|rev|hon)\.?\s+/i, "");
+  return text.replace(/[^\w\s'\-À-ɏ]/g, "").replace(/\s+/g, " ").trim();
+}
+
+function splitName(raw) {
+  const name = cleanName(raw);
+  if (!name) return { first: "", last: "" };
+  let parts = name.split(" ").filter(Boolean);
+  while (parts.length > 2 && SUFFIXES.has(parts[parts.length - 1].toLowerCase())) parts.pop();
+  while (parts.length > 2 && SUFFIXES.has(parts[0].toLowerCase())) parts.shift();
+  if (parts.length === 1) return { first: parts[0], last: "" };
+
+  let index = parts.length - 1;
+  let last;
+  if (PARTICLES.has(parts[index].toLowerCase())) {
+    index -= 1;
+    while (index >= 0 && PARTICLES.has(parts[index].toLowerCase())) index -= 1;
+    if (index < 0) return { first: parts[0], last: parts.slice(1).join(" ") };
+    last = parts.slice(index).join(" ");
+  } else {
+    last = parts[index];
+  }
+  const firstParts = parts.slice(0, index);
+  if (!firstParts.length) return { first: parts[0], last: parts.slice(1).join(" ") };
+  let first = firstParts[0];
+  const remainder = firstParts.slice(1);
+  if (remainder.length && remainder.every(p => PARTICLES.has(p.toLowerCase()))) {
+    last = remainder.concat([last]).join(" ");
+  }
+  return { first, last };
+}
+
+function slugify(text) {
+  const map = { ß:"ss", æ:"ae", ø:"o", å:"a", ä:"ae", ö:"oe", ü:"ue", é:"e",
+    è:"e", ê:"e", ë:"e", á:"a", à:"a", â:"a", ã:"a", í:"i", ì:"i", î:"i", ï:"i",
+    ó:"o", ò:"o", ô:"o", õ:"o", ú:"u", ù:"u", û:"u", ñ:"n", ç:"c", š:"s", ž:"z",
+    ł:"l", đ:"d", ğ:"g", ı:"i", þ:"th", ð:"d" };
+  let out = String(text || "").toLowerCase();
+  for (const k in map) out = out.split(k).join(map[k]);
+  return out.replace(/[^a-z0-9]+/g, "");
+}
+
+/** Ordered person-specific local parts. first@ first, on purpose. */
+function emailPatterns(first, last) {
+  const f = slugify(first), l = slugify(last);
+  if (!f) return [];
+  const candidates = [
+    f,
+    l ? f + "." + l : null,
+    l ? f + l : null,
+    l ? f[0] + l : null,
+    l ? f + "_" + l : null,
+    l ? l + f : null,
+    l ? f + "-" + l : null,
+    l ? f[0] + "." + l : null,
+    l ? f + l[0] : null,
+    l ? l : null
+  ];
+  const seen = {}, out = [];
+  for (const c of candidates) {
+    if (!c || c.length < 2 || seen[c]) continue;
+    seen[c] = 1;
+    out.push(c);
+  }
+  return out;
+}
+
+const ROLE_LOCALS = ["founders","hello","hi","info","contact","team","sales",
+  "support","office","general","press","careers","jobs","admin"];
+const ROLE_SET = new Set(ROLE_LOCALS);
+
+function guessEmails(first, last, domain) {
+  if (!domain) return [];
+  const out = [];
+  emailPatterns(first, last).forEach(p => out.push(p + "@" + domain));
+  ROLE_LOCALS.forEach(r => out.push(r + "@" + domain));
+  return Array.from(new Set(out));
+}
+
+function stripWww(domain) {
+  return String(domain || "").replace(/^www\./, "");
+}
+
+function localMatches(email, first, last) {
+  const local = String(email || "").split("@")[0].toLowerCase();
+  const f = slugify(first), l = slugify(last);
+  if (!f) return false;
+  const squashed = local.replace(/[._-]/g, "");
+  if (local === f || local.split(".").indexOf(f) !== -1) return true;
+  if (local.split("_").indexOf(f) !== -1) return true;
+  if (squashed === f) return true;
+  if (local[0] === f[0] && l && squashed.indexOf(l) !== -1) return true;
+  if (l.length > 3 && squashed.indexOf(l) === 0) return true;
+  return false;
+}
+
+/* ------------------------------------------------------------ placeholders */
+
+const PLACEHOLDERS = [
+  ["first_name", "Founder's first name"],
+  ["last_name", "Founder's last name"],
+  ["company", "Company name"],
+  ["one_liner", "What the company does"],
+  ["tags", "Company tags"],
+  ["website", "Company website"],
+  ["location", "Company location"],
+  ["team_size", "Team size"],
+  ["batch", "YC batch"],
+  ["my_name", "Your name"],
+  ["portfolio", "Your portfolio"],
+  ["github", "Your GitHub"],
+  ["resume", "Your resume link"]
+];
+
+const PH_RE = /\{([a-z_]+)\}/g;
+
+function companyVars(company) {
+  const d = state.details;
+  return {
+    first_name: "", last_name: "", company: "", one_liner: "", tags: "",
+    website: "", location: "", team_size: "", batch: "",
+    my_name: d.my_name, portfolio: d.portfolio, github: d.github,
+    resume: d.resume
+  };
+}
+
+function varsFor(company, founder) {
+  const vars = companyVars(company);
+  if (founder) {
+    vars.first_name = founder.first_name || "";
+    vars.last_name = founder.last_name || "";
+  }
+  vars.company = company.name || "";
+  vars.one_liner = company.one_liner || "";
+  vars.tags = (company.tags || []).slice(0, 3).join(", ");
+  vars.website = company.website || "";
+  vars.location = company.location || "";
+  vars.team_size = company.team_size ? String(company.team_size) : "";
+  vars.batch = company.batch || "";
+  return vars;
+}
+
+const isBlank = v => v == null || String(v).trim() === "";
+
+/**
+ * Substitute placeholders, optionally removing any line that referenced a
+ * field which resolved to nothing. That is what keeps "- GitHub: {github}"
+ * from becoming "- GitHub:" when you never filled in your GitHub.
+ */
+function fillTemplate(text, vars, dropEmpty) {
+  const lines = String(text || "").split("\n");
+  const kept = [];
+  for (const line of lines) {
+    if (dropEmpty) {
+      const keys = [];
+      line.replace(PH_RE, (m, key) => { keys.push(key); return m; });
+      const hasEmpty = keys.some(key => !(key in vars) || isBlank(vars[key]));
+      if (keys.length && hasEmpty) continue;
+    }
+    kept.push(line.replace(PH_RE, (m, key) =>
+      (key in vars ? String(vars[key] == null ? "" : vars[key]) : m)));
+  }
+  return kept.join("\n").replace(/\n{3,}/g, "\n\n").trim();
+}
+
+/* --------------------------------------------------------------------- api */
+
+const API_BASE = "/api/yc";
+
+async function apiGet(action, params) {
+  const url = new URL(API_BASE, location.href);
+  url.searchParams.set("action", action);
+  Object.keys(params || {}).forEach(k => url.searchParams.set(k, params[k]));
+  const res = await fetch(url, { headers: { Accept: "application/json" } });
+  let data;
+  try {
+    data = await res.json();
+  } catch (err) {
+    throw new Error("server returned a non-JSON response (HTTP " + res.status + ")");
+  }
+  if (!res.ok) throw new Error(data && data.error ? data.error : "HTTP " + res.status);
+  return data;
+}
+
+/* ------------------------------------------------------- the email ladder */
+
+const SOURCE_LABEL = {
+  verified: "Verified",
+  unverified: "Unverified",
+  site: "On site",
+  role: "On site (role)",
+  guess: "Guess",
+  none: "No email"
+};
+const SOURCE_CLASS = {
+  verified: "b-verified", unverified: "b-unverified", site: "b-site",
+  role: "b-site", guess: "b-guess", none: "b-none"
+};
+
+function apifyKey(company, founder) {
+  return [state.apify.actor, state.apify.level,
+    (founder.first_name || "").toLowerCase(),
+    (founder.last_name || "").toLowerCase(),
+    stripWww(company.domain || "")].join("|");
+}
+
+/**
+ * The whole resolution ladder, in priority order:
+ *   1. Apify verified / unverified (only when the user supplied a token)
+ *   2. a personal address on the company's own website that matches this
+ *      founder's name
+ *   3. a *role* address published on that website
+ *   4. pattern guesses, first@domain first, then role fallbacks
+ *
+ * A personal address on the site that does not match the founder is somebody
+ * else's mailbox, so it is never handed over: mislabelling it as a role address
+ * is how you end up cold-emailing a colleague's inbox.
+ */
+function resolveFounder(company, founder) {
+  const domain = stripWww(company.domain || "");
+  const found = state.apify.results[apifyKey(company, founder)];
+
+  if (found && found.email) {
+    return {
+      email: found.email,
+      source: found.isVerified ? "verified" : "unverified",
+      confidence: found.confidenceScore,
+      notes: [
+        found.resultStatus ? found.resultStatus : null,
+        found.isCatchAll ? "catch-all domain" : null,
+        found.isRoleAccount ? "role account" : null,
+        found.sources && found.sources.length ? "via " + found.sources.join("+") : null
+      ].filter(Boolean).join(" · ")
+    };
+  }
+
+  const site = company.site_emails || [];
+
+  if (domain) {
+    const personal = site.filter(e => e.kind !== "role" &&
+      localMatches(e.email, founder.first_name, founder.last_name));
+    if (personal.length) {
+      return { email: personal[0].email, source: "site", notes: "published on their site" };
+    }
+  }
+
+  const role = site.filter(e => e.kind === "role");
+  if (role.length) {
+    return { email: role[0].email, source: "role", notes: "role address on their site" };
+  }
+
+  const guesses = guessEmails(founder.first_name, founder.last_name, domain);
+  if (guesses.length) {
+    return { email: guesses[0], source: "guess", notes: "pattern guess", guesses: guesses };
+  }
+  return { email: "", source: "none", notes: "" };
+}
+
+/* ------------------------------------------------------- founder hydration */
+
+const founderQueue = [];
+let founderActive = 0;
+const FOUNDER_CONCURRENCY = 4;
+
+const siteQueue = [];
+let siteActive = 0;
+const SITE_CONCURRENCY = 3;
+
+function enqueueSite(company) {
+  if (!company.domain) return;
+  if (company.site_state && company.site_state !== "idle") return;
+  if (siteQueue.indexOf(company) !== -1) return;
+  siteQueue.push(company);
+  pumpSites();
+}
+
+function pumpSites() {
+  while (siteActive < SITE_CONCURRENCY && siteQueue.length) {
+    const company = siteQueue.shift();
+    siteActive += 1;
+    company.site_state = "loading";
+    render();
+    apiGet("site_emails", { url: company.domain })
+      .then(data => {
+        company.site_emails = data.emails || [];
+        company.site_state = "done";
+      })
+      .catch(() => { company.site_state = "error"; })
+      .then(() => {
+        siteActive -= 1;
+        save();
+        render();
+        pumpSites();
+      });
+  }
+}
+
+function enqueueFounders(company) {
+  if (company.founders_state === "loading") return;
+  if (company.founders && company.founders.length) return;
+  founderQueue.push(company);
+  pumpFounders();
+}
+
+function pumpFounders() {
+  while (founderActive < FOUNDER_CONCURRENCY && founderQueue.length) {
+    const company = founderQueue.shift();
+    founderActive += 1;
+    company.founders_state = "loading";
+    apiGet("company", { slug: company.slug })
+      .then(profile => {
+        company.founders = profile.founders || [];
+        company.founders_state = "loaded";
+        company.site_emails = [];
+        company.site_state = "idle";
+        if (!company.domain && profile.domain) company.domain = profile.domain;
+        // Cheap: the page text itself often names an address.
+        if (!company.domain && (profile.page_emails || []).length) {
+          company.page_emails = profile.page_emails;
+        }
+      })
+      .catch(err => {
+        company.founders_state = "error";
+        company.founder_error = err.message;
+      })
+      .then(() => {
+        founderActive -= 1;
+        save();
+        render();
+        if (!state.ui.autoFounders) return;
+        // Site crawl is the third rung; do it lazily so paging stays snappy,
+        // and through the same bounded queue so 20 cards cannot fire 20
+        // concurrent crawls at the serverless function.
+        if (company.domain && company.site_state === "idle") enqueueSite(company);
+        pumpFounders();
+      });
+  }
+  // Paint the queued state straight away rather than waiting for the first
+  // profile to land.
+  render();
+}
+
+/* ------------------------------------------------------------- rendering */
+
+function activeBatchState() {
+  if (!state.activeBatch) return null;
+  if (!state.batches[state.activeBatch]) {
+    state.batches[state.activeBatch] = { offset: 0, total: 0, companies: {} };
+  }
+  return state.batches[state.activeBatch];
+}
+
+function allCompanies() {
+  const b = activeBatchState();
+  if (!b) return [];
+  return Object.keys(b.companies).map(id => b.companies[id]);
+}
+
+function visibleCompanies() {
+  const filter = state.ui.filter;
+  const query = (state.ui.query || "").trim().toLowerCase();
+  return allCompanies().filter(company => {
+    const id = String(company.id);
+    const hidden = state.hidden.indexOf(id) !== -1;
+    // Hidden cards drop out of every other view so the list stays short. The
+    // Hidden filter is the only way back in, otherwise "unhide" is unreachable.
+    if (filter === "hidden") { if (!hidden) return false; }
+    else if (hidden) return false;
+    const sent = !!state.sent[id];
+    // Sent companies stay in place, dimmed, so the list does not reshuffle
+    // under your cursor while you work through a batch. The "sent" filter
+    // shows only those.
+    if (filter === "sent") { if (!sent) return false; }
+    else if (filter === "noemail") {
+      if ((company.founders || []).some(f => resolveFounder(company, f).email)) return false;
+    } else if (filter === "emails") {
+      if (!(company.founders || []).some(f => resolveFounder(company, f).email)) return false;
+    }
+    if (query) {
+      const hay = [
+        company.name, company.one_liner, company.batch,
+        (company.tags || []).join(" "),
+        (company.founders || []).map(f => f.name).join(" ")
+      ].join(" ").toLowerCase();
+      if (hay.indexOf(query) === -1) return false;
+    }
+    return true;
+  });
+}
+
+function renderStats() {
+  const companies = allCompanies();
+  const founders = companies.reduce((n, c) => n + (c.founders || []).length, 0);
+  const sent = Object.keys(state.sent).length;
+  $("#stats").innerHTML =
+    "<span><b>" + companies.length + "</b> companies</span>" +
+    "<span><b>" + founders + "</b> founders</span>" +
+    "<span><b>" + sent + "</b> sent</span>";
+}
+
+function renderFounder(company, founder) {
+  const resolved = resolveFounder(company, founder);
+  const vars = varsFor(company, founder);
+  const drop = state.template.dropEmptyLines;
+
+  const subject = fillTemplate(state.template.subject, vars, false);
+  const body = fillTemplate(state.template.body, vars, drop);
+
+  const badge = '<span class="badge ' + (SOURCE_CLASS[resolved.source] || "b-none") +
+    '">' + esc(SOURCE_LABEL[resolved.source]) + "</span>";
+
+  const emailHtml = resolved.email
+    ? '<span class="femail">' + esc(resolved.email) + "</span>" +
+      '<button class="tiny ghost" data-copy="' + esc(resolved.email) +
+      '" data-what="Email">copy</button>'
+    : '<span class="femail none">no address found</span>';
+
+  const notes = resolved.notes
+    ? '<span class="ftitle">' + esc(resolved.notes) +
+      (resolved.confidence != null ? " · confidence " + esc(resolved.confidence) : "") +
+      "</span>"
+    : "";
+
+  let guesses = "";
+  if (resolved.source === "guess" && resolved.guesses && resolved.guesses.length > 1) {
+    const shown = state.ui.showAllGuesses ? resolved.guesses : resolved.guesses.slice(1, 5);
+    guesses =
+      '<div class="guesses"><span class="ftitle">also:</span>' +
+      shown.map(g => '<span class="g" data-copy="' + esc(g) + '" data-what="Email">' +
+        esc(g) + "</span>").join("") +
+      (state.ui.showAllGuesses ? "" :
+        '<span class="ftitle">' + (resolved.guesses.length - 5) + " more</span>") +
+      "</div>";
+  }
+
+  const links =
+    (founder.linkedin ? '<a class="fico" href="' + esc(founder.linkedin) +
+      '" target="_blank" rel="noopener noreferrer">in</a>' : "") +
+    (founder.twitter ? '<a class="fico" href="' + esc(founder.twitter) +
+      '" target="_blank" rel="noopener noreferrer">x</a>' : "");
+
+  const siteBadge = company.site_state === "loading"
+    ? '<span class="skel">checking site…</span>' : "";
+
+  const mailtoSubject = encodeURIComponent(subject);
+  const mailtoBody = encodeURIComponent(body);
+  const mailto = resolved.email
+    ? '<a class="button tiny" style="text-decoration:none" href="mailto:' +
+      encodeURIComponent(resolved.email) + "?subject=" + mailtoSubject +
+      "&body=" + mailtoBody + '">Open in mail app</a>'
+    : '<button class="tiny" disabled>Open in mail app</button>';
+
+  const full = subject ? subject + "\n\n" + body : body;
+
+  return '' +
+    '<div class="frow">' +
+      '<span class="fname">' + esc(founder.name) + "</span>" +
+      '<span class="ftitle">' + esc(founder.title || "") + "</span>" +
+      links + '<span class="spacer"></span>' + badge + siteBadge +
+    "</div>" +
+    '<div class="frow" style="margin-top:6px">' + emailHtml + notes + "</div>" +
+    guesses +
+    (body
+      ? '<div class="draft">' +
+          '<div class="dsub">Subject: <b>' + (subject ? esc(subject) :
+            '<span class="ftitle">(empty)</span>') + "</b></div>" +
+          '<div class="dbody">' + esc(body) + "</div>" +
+          '<div class="dactions">' +
+            '<button class="tiny" data-copy="' + esc(body) + '" data-what="Body">Copy body</button>' +
+            '<button class="tiny" data-copy="' + esc(subject) + '" data-what="Subject">Copy subject</button>' +
+            '<button class="tiny" data-copy="' + esc(full) + '" data-what="Subject + body">Copy full</button>' +
+            mailto +
+          "</div>" +
+        "</div>"
+      : '<div class="note">Write a body template above to see drafts here.</div>');
+}
+
+function renderCompany(company) {
+  const id = String(company.id);
+  const sent = state.sent[id];
+  const founders = company.founders || [];
+
+  let founderHtml;
+  if (company.founders_state === "loading") {
+    founderHtml = '<div class="cfounder"><span class="skel">loading founders…</span></div>';
+  } else if (company.founders_state === "error") {
+    founderHtml = '<div class="cfounder"><span class="skel">could not load founders (' +
+      esc(company.founder_error || "error") + ")</span> " +
+      '<button class="tiny" data-founders="' + esc(company.slug) + '">retry</button></div>';
+  } else if (!founders.length) {
+    // "idle" means queued but not yet fetched. Saying "no founders listed"
+    // here reads like broken data, which is the wrong first impression.
+    const idle = company.founders_state === "idle";
+    founderHtml = '<div class="cfounder"><span class="skel">' +
+      (idle ? (state.ui.autoFounders ? "queuing founders…"
+                                     : "founders not loaded — tick auto-load")
+            : "no founders listed") + "</span></div>";
+  } else {
+    founderHtml = founders.map(f => '<div class="cfounder">' +
+      renderFounder(company, f) + "</div>").join("");
+  }
+
+  const meta =
+    '<span class="pill">' + esc(company.batch || "") + "</span>" +
+    (company.team_size ? '<span class="pill">team ' + esc(company.team_size) + "</span>" : "") +
+    (company.location ? '<span class="pill">' + esc(company.location) + "</span>" : "") +
+    (company.tags || []).slice(0, 4).map(t => '<span class="pill">' + esc(t) + "</span>").join("");
+
+  // YC stores "/company/thumb/missing.png" for companies with no logo. Rendered
+  // verbatim that resolves against our own origin and 404s on every such card,
+  // so anything that is not an absolute http(s) URL falls back to initials.
+  const logoSrc = /^https?:\/\//i.test(company.logo || "") ? company.logo : "";
+  const logo = logoSrc
+    ? '<img class="logo" src="' + esc(logoSrc) + '" alt="" loading="lazy">'
+    : '<div class="logo ph">' + esc((company.name || "?").slice(0, 1).toUpperCase()) + "</div>";
+
+  const hidden = state.hidden.indexOf(id) !== -1;
+  const emailCount = founders.filter(f => resolveFounder(company, f).email).length;
+
+  return '' +
+    '<div class="company' + (sent ? " is-sent" : "") + (hidden ? " is-hidden" : "") +
+      '" data-company="' + esc(id) + '" data-name="' + esc(company.name || "") + '">' +
+      '<div class="chead">' + logo +
+        '<div class="cmain">' +
+          '<div class="cname"><a href="' + esc(company.yc_url) +
+            '" target="_blank" rel="noopener noreferrer">' + esc(company.name) + "</a></div>" +
+          (company.one_liner ? '<div class="cone">' + esc(company.one_liner) + "</div>" : "") +
+          '<div class="cmeta">' + meta + "</div>" +
+        "</div>" +
+        '<div class="row tight" style="flex-direction:column;align-items:flex-end">' +
+          (sent ? '<span class="badge b-sent">sent</span>' : "") +
+          '<button class="tiny ' + (sent ? "" : "ghost") + '" data-sent="' + esc(id) + '">' +
+            (sent ? "unmark" : "mark sent") + "</button>" +
+          '<button class="tiny ghost" data-hide="' + esc(id) + '">' +
+            (hidden ? "unhide" : "hide") + "</button>" +
+        "</div>" +
+      "</div>" +
+      (emailCount
+        ? '<div class="cfsum"><span class="ftitle">' +
+          emailCount + " of " + founders.length + " founders have an address</span></div>"
+        : "") +
+      founderHtml +
+    "</div>";
+}
+
+function render() {
+  renderStats();
+  renderFilterBar();
+  const list = $("#list");
+  const visible = visibleCompanies();
+
+  $("#listHint").textContent = visible.length
+    ? visible.length + " shown of " + allCompanies().length + " loaded"
+    : "";
+
+  if (!allCompanies().length) {
+    list.innerHTML = '<div class="empty"><div class="big">Nothing loaded yet</div>' +
+      "Pick a batch above and press <b>Load companies</b>.</div>";
+  } else if (!visible.length) {
+    list.innerHTML = '<div class="empty"><div class="big">Nothing matches this filter</div>' +
+      "Try <b>All</b>, or clear the search box.</div>";
+  } else {
+    list.innerHTML = visible.map(renderCompany).join("");
+  }
+  renderProgress();
+}
+
+function renderFilterBar() {
+  const n = state.hidden.length;
+  const btn = $("#filterHidden");
+  btn.hidden = !n;
+  btn.textContent = "Hidden (" + n + ")";
+  $$("#filters [data-filter]").forEach(b => {
+    b.className = "tiny" + (b.dataset.filter === state.ui.filter ? " primary" : "");
+  });
+}
+
+function renderProgress() {
+  const b = activeBatchState();
+  const wrap = $("#progWrap");
+  if (!b || !b.total) { wrap.style.display = "none"; return; }
+  const count = Object.keys(b.companies).length;
+  wrap.style.display = "";
+  $("#progBar").style.width = Math.min(100, (count / b.total) * 100) + "%";
+  $("#btnMore").disabled = count >= b.total;
+  $("#btnLoad").textContent = count ? "Load more (+" + PAGE_SIZE + ")" : "Load companies";
+  $("#btnLoad").className = count ? "" : "primary";
+  $("#loadNote").textContent = count + " of " + b.total +
+    (count >= b.total ? " loaded — batch complete." : " loaded.");
+}
+
+/* ------------------------------------------------------------- interaction */
+
+function renderChips() {
+  $("#chips").innerHTML = PLACEHOLDERS
+    .map(p => '<span class="chip" data-ph="' + p[0] + '" title="' + esc(p[1]) + '">{' +
+      p[0] + "}</span>")
+    .join("");
+}
+
+function updateTemplateNote() {
+  const vars = companyVars({});
+  const dropped = state.template.dropEmptyLines
+    ? String(state.template.body || "").split("\n").filter(line => {
+        const keys = [];
+        line.replace(PH_RE, (m, k) => { keys.push(k); return m; });
+        return keys.length && keys.some(k => !(k in vars) || isBlank(vars[k]));
+      }).length
+    : 0;
+  const missing = PLACEHOLDERS.filter(p => isBlank(vars[p[0]]))
+    .map(p => p[0]);
+  $("#tplNote").innerHTML = (dropped
+    ? '<span class="warn">' + dropped + " line" + (dropped === 1 ? "" : "s") +
+      " will be dropped</span> until you fill in your details. "
+    : "") +
+    (missing.length
+      ? "Not set: <code>" + missing.map(esc).join("</code>, <code>") + "</code>."
+      : "All fields set — no lines will be dropped.");
+}
+
+/* ------------------------------------------------------------ batch loading */
+
+let loading = false;
+
+async function loadMore() {
+  const b = activeBatchState();
+  if (!b || !state.activeBatch) return;
+  if (loading) return;
+  if (b.offset >= b.total && b.total) return;
+
+  loading = true;
+  $("#btnLoad").disabled = true;
+  $("#btnMore").disabled = true;
+  $("#loadNote").textContent = "loading…";
+
+  try {
+    const data = await apiGet("companies", {
+      batch: state.activeBatch, offset: b.offset, limit: PAGE_SIZE
+    });
+    // Keyed by id, so a reindex between page loads cannot duplicate a card.
+    data.companies.forEach(company => {
+      const key = String(company.id);
+      if (!b.companies[key]) b.companies[key] = company;
+    });
+    b.total = data.total;
+    b.offset += data.companies.length;
+    saveNow();
+    render();
+
+    if (state.ui.autoFounders) {
+      const pending = Object.keys(b.companies)
+        .map(k => b.companies[k])
+        .filter(c => c.founders_state === "idle" || c.founders_state === "error");
+      pending.forEach(enqueueFounders);
+    }
+  } catch (err) {
+    $("#loadNote").textContent = "";
+    toast("Could not load companies: " + err.message, "err", 7000);
+  } finally {
+    loading = false;
+    $("#btnLoad").disabled = false;
+    renderProgress();
+  }
+}
+
+async function loadBatches() {
+  try {
+    const data = await apiGet("batches");
+    const select = $("#batchSelect");
+    select.innerHTML = data.batches
+      .map(b => '<option value="' + esc(b.name) + '">' + esc(b.name) +
+        " · " + b.count + "</option>").join("");
+    $("#batchSource").textContent = data.batches.length + " batches · newest first";
+
+    const known = state.activeBatch;
+    const exists = data.batches.some(b => b.name === known);
+    state.activeBatch = exists ? known : (data.latest || (data.batches[0] || {}).name || "");
+    select.value = state.activeBatch;
+    activeBatchState();
+    save();
+    renderProgress();
+  } catch (err) {
+    $("#batchSelect").innerHTML = '<option>Could not load batches</option>';
+    toast("Could not load batches: " + err.message, "err", 7000);
+  }
+}
+
+/* ----------------------------------------------------------------- Apify */
+
+const apifyWait = debounce(() => {}, 1);
+
+function apifyActorId() {
+  return String(state.apify.actor || "").trim().replace(/\//g, "~");
+}
+
+function apifyHeaders() {
+  return {
+    "Content-Type": "application/json",
+    "X-Apify-Request-Origin": "applyonce"
+  };
+}
+
+function apifyNeedToken() {
+  toast("Paste an Apify token first", "warn");
+  $("#apifyNote").innerHTML =
+    '<span class="warn">No token yet</span> — paste one above to enable enrichment. ' +
+    "The token is stored only in this browser.";
+}
+
+async function apifyTest() {
+  const token = (state.apify.token || "").trim();
+  if (!token) { apifyNeedToken(); return; }
+  try {
+    const res = await fetch("https://api.apify.com/v2/users/me?token=" +
+      encodeURIComponent(token), { headers: apifyHeaders() });
+    if (!res.ok) throw new Error("HTTP " + res.status + " — token rejected");
+    const data = await res.json();
+    $("#apifyNote").innerHTML = '<span class="ok">Token works</span> — ' +
+      "connected as <b>" + esc(data.data && data.data.username || "unknown") + "</b>";
+  } catch (err) {
+    $("#apifyNote").innerHTML = '<span class="err">Token check failed</span>: ' + esc(err.message);
+  }
+}
+
+async function apifyRun() {
+  const token = (state.apify.token || "").trim();
+  if (!token) { apifyNeedToken(); return; }
+
+  // Build the contact list from what is actually loaded.
+  const jobs = [];
+  allCompanies().forEach(company => {
+    const domain = stripWww(company.domain || "");
+    if (!domain) return;
+    (company.founders || []).forEach(founder => {
+      if (!founder.first_name || !founder.last_name) return;
+      jobs.push({ company, founder, domain });
+    });
+  });
+
+  if (!jobs.length) {
+    toast("No founders with a name and a website domain are loaded yet", "warn", 6000);
+    return;
+  }
+
+  const actor = apifyActorId();
+  const level = state.apify.level;
+  const button = $("#btnApifyRun");
+  button.disabled = true;
+
+  const CHUNK = 25;  // the Actor caches per-domain results, so batching is cheap
+  let done = 0, found = 0, failed = 0;
+
+  for (let i = 0; i < jobs.length; i += CHUNK) {
+    const slice = jobs.slice(i, i + CHUNK);
+    button.textContent = "Enriching " + Math.min(i + CHUNK, jobs.length) + "/" + jobs.length;
+    $("#apifyNote").textContent =
+      "running " + actor + " on " + slice.length + " contact(s)…";
+
+    try {
+      const res = await fetch(
+        "https://api.apify.com/v2/acts/" + encodeURIComponent(actor) +
+        "/run-sync-get-dataset-items?token=" + encodeURIComponent(token) +
+        "&timeout=300&format=json&memory=1024",
+        {
+          method: "POST",
+          headers: apifyHeaders(),
+          body: JSON.stringify({
+            contacts: slice.map(j => ({
+              firstName: j.founder.first_name,
+              lastName: j.founder.last_name,
+              domain: j.domain
+            })),
+            verificationLevel: level,
+            detectCatchAll: level !== "format",
+            maxPatternsToTest: Math.max(1, Math.min(14, parseInt(state.apify.maxPatterns, 10) || 8)),
+            checkDeliverability: false
+          })
+        }
+      );
+
+      const payload = await res.json();
+      if (!res.ok) {
+        throw new Error((payload && payload.error && payload.error.message) || "HTTP " + res.status);
+      }
+
+      const items = Array.isArray(payload) ? payload : (payload.items || []);
+      items.forEach(item => {
+        if (!item || !item.email) return;
+        const key = [state.apify.actor, level,
+          String(item.firstName || "").toLowerCase(),
+          String(item.lastName || "").toLowerCase(),
+          stripWww(item.domain || "")].join("|");
+        if (!state.apify.results[key]) found += 1;
+        state.apify.results[key] = {
+          email: String(item.email).toLowerCase(),
+          isVerified: !!item.isVerified,
+          confidenceScore: item.confidenceScore,
+          resultStatus: item.resultStatus || null,
+          isCatchAll: !!item.isCatchAll,
+          isRoleAccount: !!item.isRoleAccount,
+          sources: item.sources || []
+        };
+      });
+      done += slice.length;
+      saveNow();
+      render();
+    } catch (err) {
+      failed += slice.length;
+      $("#apifyNote").innerHTML = '<span class="err">Apify error</span>: ' +
+        esc(err.message) + " — stopping.";
+      break;
+    }
+  }
+
+  button.disabled = false;
+  button.textContent = "Enrich loaded";
+  $("#apifyNote").innerHTML = (failed
+    ? '<span class="err">Stopped after ' + done + " contact(s)</span>. "
+    : '<span class="ok">Done.</span> ') +
+    "Processed <b>" + done + "</b> of <b>" + jobs.length +
+    "</b> contacts; <b>" + found + "</b> addresses stored. " +
+    "Verified results carry a green badge; everything else falls through to the " +
+    "site and guess rungs.";
+  saveNow();
+  render();
+}
+
+/* ------------------------------------------------------------------- wiring */
+
+function hydrateInputs() {
+  $$("[data-bind]").forEach(el => {
+    const path = el.dataset.bind;
+    const value = get(state, path);
+    if (el.type === "checkbox") el.checked = !!value;
+    else el.value = value == null ? "" : value;
+  });
+  $("#batchSelect").value = state.activeBatch || "";
+}
+
+function wire() {
+  // Two-way binding for every [data-bind] control.
+  const onStateChange = debounce(() => {
+    save();
+    render();
+    updateTemplateNote();
+  }, 180);
+
+  $$("[data-bind]").forEach(el => {
+    const path = el.dataset.bind;
+    const event = (el.tagName === "SELECT" || el.type === "checkbox") ? "change" : "input";
+    el.addEventListener(event, () => {
+      set(state, path, el.type === "checkbox" ? el.checked : el.value);
+      if (path === "template.body" || path === "template.subject") {
+        // Keep drafts live without waiting on the debounce for the note.
+        updateTemplateNote();
+      }
+      onStateChange();
+    });
+  });
+
+  // Placeholder chips insert at the caret.
+  $("#chips").addEventListener("click", event => {
+    const chip = event.target.closest("[data-ph]");
+    if (!chip) return;
+    const target = document.activeElement;
+    const field = (target && target.id === "subject") ? $("#subject") : $("#body");
+    const token = "{" + chip.dataset.ph + "}";
+    const start = field.selectionStart == null ? field.value.length : field.selectionStart;
+    const end = field.selectionEnd == null ? start : field.selectionEnd;
+    field.value = field.value.slice(0, start) + token + field.value.slice(end);
+    field.focus();
+    field.selectionStart = field.selectionEnd = start + token.length;
+    set(state, target && target.id === "subject" ? "template.subject" : "template.body",
+      field.value);
+    save();
+    render();
+  });
+
+  $("#btnResetTpl").addEventListener("click", () => {
+    state.template = Object.assign({}, DEFAULT_TEMPLATE);
+    hydrateInputs();
+    saveNow();
+    render();
+    updateTemplateNote();
+  });
+
+  // Batch selector.
+  $("#batchSelect").addEventListener("change", event => {
+    state.activeBatch = event.target.value;
+    save();
+    render();
+    renderProgress();
+  });
+
+  $("#btnLoad").addEventListener("click", loadMore);
+  $("#btnMore").addEventListener("click", loadMore);
+
+  // Filters.
+  $("#filters").addEventListener("click", event => {
+    const button = event.target.closest("[data-filter]");
+    if (!button) return;
+    state.ui.filter = button.dataset.filter;
+    $$("#filters [data-filter]").forEach(b => {
+      const active = b.dataset.filter === state.ui.filter;
+      b.className = "tiny" + (active ? " primary" : "");
+    });
+    save();
+    render();
+  });
+
+  // A logo that 404s upstream would otherwise leave a broken image behind.
+  // "error" does not bubble, so listen in the capture phase.
+  $("#list").addEventListener("error", event => {
+    const img = event.target;
+    if (img.tagName !== "IMG") return;
+    const name = (img.closest(".company") && img.closest(".company").dataset.name) || "?";
+    const placeholder = document.createElement("div");
+    placeholder.className = "logo ph";
+    placeholder.textContent = name.slice(0, 1).toUpperCase();
+    img.replaceWith(placeholder);
+  }, true);
+
+  // Per-card actions, delegated.
+  $("#list").addEventListener("click", event => {
+    const copy = event.target.closest("[data-copy]");
+    if (copy) { copyText(copy.dataset.copy, copy.dataset.what || "Copied"); return; }
+
+    const sentBtn = event.target.closest("[data-sent]");
+    if (sentBtn) {
+      const id = sentBtn.dataset.sent;
+      if (state.sent[id]) delete state.sent[id];
+      else {
+        const company = state.batches[state.activeBatch].companies[id];
+        const emails = (company && (company.founders || []).map(
+          f => resolveFounder(company, f).email)).filter(Boolean);
+        state.sent[id] = { at: Date.now(), emails: emails };
+      }
+      saveNow();
+      render();
+      return;
+    }
+
+    const hideBtn = event.target.closest("[data-hide]");
+    if (hideBtn) {
+      const id = hideBtn.dataset.hide;
+      const at = state.hidden.indexOf(id);
+      if (at === -1) state.hidden.push(id); else state.hidden.splice(at, 1);
+      saveNow();
+      render();
+      return;
+    }
+
+    const retry = event.target.closest("[data-founders]");
+    if (retry) {
+      const company = state.batches[state.activeBatch].companies[
+        Object.keys(state.batches[state.activeBatch].companies)
+          .find(k => state.batches[state.activeBatch].companies[k].slug === retry.dataset.founders)];
+      if (company) { company.founders_state = "idle"; enqueueFounders(company); render(); }
+    }
+  });
+
+  // Apify.
+  $("#btnApifyTest").addEventListener("click", apifyTest);
+  $("#btnApifyRun").addEventListener("click", apifyRun);
+
+  // Reset everything.
+  $("#btnReset").addEventListener("click", () => {
+    if (!confirm("Delete all ApplyOnce data from this browser?\n\n" +
+      "This clears your details, template, loaded batches, sent marks and " +
+      "Apify token. It cannot be undone.")) return;
+    try { localStorage.removeItem(STORE_KEY); } catch (err) { /* ignore */ }
+    state = blankState();
+    hydrateInputs();
+    saveNow();
+    render();
+    updateTemplateNote();
+    loadBatches();
+    toast("Cleared");
+  });
+}
+
+/* -------------------------------------------------------------------- boot */
+
+function boot() {
+  renderChips();
+  hydrateInputs();
+  wire();
+
+  render();
+  updateTemplateNote();
+  loadBatches();
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", boot);
+} else {
+  boot();
+}
+</script>
+</body>
+</html>

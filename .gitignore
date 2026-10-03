@@ -1,0 +1,21 @@
+# Virtualenv (created with `python3 -m venv .venv`)
+.venv/
+venv/
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+
+# Scrape output from the CLI scripts (regenerate freely)
+data/
+*.json
+*.csv
+!vercel.json
+
+# Secrets — never commit an Apify token
+.env
+.env.*
+!.env.example
+
+# OS noise
+.DS_Store
