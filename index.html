@@ -169,6 +169,30 @@ button.danger:hover:not(:disabled) { border-color: var(--red); color: var(--red)
 .b-none       { color: var(--red);     border-color: #5c2323;          background: rgba(255,107,107,.08); }
 .b-sent       { color: var(--violet);  border-color: #47336e;          background: rgba(177,140,255,.10); }
 
+/* ---------- send queue ---------- */
+
+.qrow {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1.6fr) minmax(0, 2fr) auto;
+  gap: 10px; align-items: center;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--line);
+}
+.qrow:last-child { border-bottom: 0; }
+.qrow .who { font-size: 12.5px; min-width: 0; }
+.qrow .who b { display: block; font-weight: 600; }
+.qrow .who span {
+  color: var(--fg-3); font-size: 11px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block;
+}
+.qrow .why { font-size: 11.5px; color: var(--fg-3); min-width: 0; }
+.qrow .why em { color: var(--amber); font-style: normal; }
+.qrow.done .who, .qrow.done .why { opacity: .55; }
+@media (max-width: 720px) {
+  .qrow { grid-template-columns: 1fr; gap: 4px; }
+}
+
+
 .pill {
   font-size: 11px; color: var(--fg-3); background: var(--bg-4);
   border: 1px solid var(--line); border-radius: 4px; padding: 1px 6px;
@@ -449,6 +473,81 @@ details.apify[open] > summary::before { content: "▾"; }
           $0.003 per email), so enrichment is billable &mdash; switch the level
           to <code>format</code> if you only want syntax checks.
         </p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ======================= 6. Storage ======================= -->
+  <!--
+    Appended as a sixth numbered card rather than a new tab. The page has no
+    tab strip, and adding one would mean inventing a navigation pattern the
+    rest of the UI does not use.
+  -->
+  <section class="card" id="storageCard">
+    <details id="storageBox">
+      <summary>Local database (durable storage)</summary>
+      <div class="body">
+        <p class="note" id="storageNote">Checking whether this server has local storage…</p>
+        <div class="grid3" id="storageActions" style="display:none">
+          <label class="field">
+            <span class="lab">&nbsp;</span>
+            <div class="row tight" style="padding-top:8px">
+              <button id="btnDbSave" class="primary">Save to database</button>
+            </div>
+          </label>
+          <label class="field">
+            <span class="lab">&nbsp;</span>
+            <div class="row tight" style="padding-top:8px">
+              <button id="btnDbRestore">Restore from database</button>
+            </div>
+          </label>
+          <label class="field">
+            <span class="lab">&nbsp;</span>
+            <div class="row tight" style="padding-top:8px">
+              <button id="btnDbRefresh">Refresh counts</button>
+            </div>
+          </label>
+        </div>
+        <p class="note">
+          The database is a SQLite file on the machine running
+          <code>serve.py</code>. Your browser's localStorage stays as the fast
+          render cache, so drafts still render with the network down &mdash; the
+          database is what survives a cleared browser profile, a new laptop, or
+          a crash. Your Apify token is never written to it.
+        </p>
+      </div>
+    </details>
+  </section>
+
+  <!-- Review and approval only. Delivery is deliberately not a button: it needs
+       a typed confirmation and credentials only the terminal should read, and a
+       page you happen to have open must never be able to make it happen. -->
+  <section class="card" id="queueCard">
+    <details id="queueBox">
+      <summary>Send queue</summary>
+      <div class="body">
+        <p class="note" id="queueNote">Checking whether this server has a queue…</p>
+        <div id="queueActions" style="display:none">
+          <div class="row tight" style="margin-bottom:6px">
+            <button id="btnQueueApproveAll" class="primary">Approve all drafts</button>
+            <button id="btnQueueRefresh">Refresh</button>
+            <span class="pill" id="queueCounts"></span>
+          </div>
+          <div id="queueList"></div>
+          <p class="note">
+            Approving here means <em>you have read it</em>. Nothing is transmitted
+            by this page. When you are happy with the list, send it from a
+            terminal, where you get a final prompt:
+          </p>
+          <p class="note"><code>python3 mailer.py preview</code> &nbsp;then&nbsp; <code>python3 mailer.py send --limit 10 --send</code></p>
+          <p class="note">
+            <code>preview</code> is a real run with the delivery removed, so it
+            shows exactly which addresses would be skipped and why &mdash;
+            role addresses, unsubscribes, unresolved
+            <code>{first_name}</code> placeholders, and the daily cap. Nothing
+            sends unless you add <code>--send</code> and confirm the prompt.
+          </p>
+        </div>
       </div>
     </details>
   </section>
@@ -811,6 +910,7 @@ function fillTemplate(text, vars, dropEmpty) {
 /* --------------------------------------------------------------------- api */
 
 const API_BASE = "/api/yc";
+const DB_BASE = "/api/db";
 
 async function apiGet(action, params) {
   const url = new URL(API_BASE, location.href);
@@ -825,6 +925,171 @@ async function apiGet(action, params) {
   }
   if (!res.ok) throw new Error(data && data.error ? data.error : "HTTP " + res.status);
   return data;
+}
+
+/* Storage lives at its own path, not under /api/yc, because api/yc.py is the
+   Vercel function and must stay free of local-only imports and of any disk
+   access. On a Vercel deploy this path simply does not exist, and dbStatus()
+   reports unavailable -- the page then behaves exactly as it always did. */
+async function dbPost(action, payload) {
+  const res = await fetch(DB_BASE, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
+    body: JSON.stringify(Object.assign({ action: action }, payload || {}))
+  });
+  let data;
+  try {
+    data = await res.json();
+  } catch (err) {
+    throw new Error("server returned a non-JSON response (HTTP " + res.status + ")");
+  }
+  if (!res.ok) throw new Error(data && data.error ? data.error : "HTTP " + res.status);
+  return data;
+}
+
+const dbGet = (action, params) => {
+  const url = new URL(DB_BASE, location.href);
+  url.searchParams.set("action", action);
+  Object.keys(params || {}).forEach(k => url.searchParams.set(k, params[k]));
+  return fetch(url, { headers: { Accept: "application/json" } }).then(async res => {
+    const data = await res.json();
+    if (!res.ok) throw new Error(data && data.error ? data.error : "HTTP " + res.status);
+    return data;
+  });
+};
+
+/* Feature-detect storage rather than inferring it from the URL, so the same page
+   works behind `serve.py`, behind Vercel, and from a bare file:// open. */
+let dbInfo = { available: false, reason: "not checked yet" };
+
+async function probeStorage() {
+  try {
+    const res = await fetch("/healthz", { headers: { Accept: "application/json" } });
+    const data = await res.json();
+    dbInfo = data.storage || { available: false, reason: "no storage section" };
+  } catch (err) {
+    dbInfo = { available: false, reason: "health check unreachable" };
+  }
+  renderStorage();
+  return dbInfo;
+}
+
+/* ------------------------------------------------------- storage UI logic */
+
+function storageCount(n) {
+  const v = Number(n || 0);
+  if (v >= 10000) return (v / 1000).toFixed(1).replace(/\.0$/, "") + "k";
+  if (v >= 1000) return (v / 100).toFixed(1).replace(/\.0$/, "") + "k";
+  return String(v);
+}
+
+function renderStorage() {
+  const note = $("#storageNote");
+  const actions = $("#storageActions");
+  if (!note || !actions) return;
+
+  // The queue lives in the database, so it has no meaning without storage.
+  // Hide the whole card rather than showing a disabled button that cannot work.
+  const queueCard = $("#queueCard");
+  if (queueCard) queueCard.style.display = dbInfo.available ? "" : "none";
+
+  if (!dbInfo.available) {
+    // No local database on this host -- a Vercel deploy, or serve.py without
+    // db.py. Force the panel open: "your data is not being saved to disk" is
+    // not something to bury behind a disclosure triangle.
+    const box = $("#storageBox");
+    if (box) box.open = true;
+    actions.style.display = "none";
+    note.innerHTML = esc(
+      "Local database unavailable (" + (dbInfo.reason || "not offered by this server") +
+      "). Everything still works and is stored in this browser. To get a " +
+      "database, run the app locally with: python3 serve.py"
+    );
+    return;
+  }
+
+  actions.style.display = "";
+  const s = dbInfo.stats || {};
+  const parts = [
+    storageCount(s.companies) + " companies",
+    storageCount(s.founders) + " founders",
+    storageCount(s.emails) + " addresses"
+  ];
+  if (s.queue) parts.push(storageCount(s.queue) + " in the send queue");
+  note.innerHTML = esc("Ready — " + parts.join(", ") + " stored at " + (dbInfo.path || "?") + ".");
+
+  refreshQueue();
+}
+
+async function refreshStorageStats() {
+  if (!dbInfo.available) return;
+  try {
+    const data = await dbGet("status");
+    dbInfo = Object.assign({}, dbInfo, data);
+    renderStorage();
+  } catch (err) {
+    toast("Could not read database status: " + err.message, "err", 8000);
+  }
+}
+
+/* Push the whole state blob up. Idempotent on the server, so this is safe to
+   run repeatedly and after a partial failure. */
+async function saveToDatabase(replace) {
+  if (!dbInfo.available) return;
+  const button = replace ? $("#btnDbRestore") : $("#btnDbSave");
+  const original = button ? button.textContent : "";
+  if (button) { button.disabled = true; button.textContent = "Saving…"; }
+  try {
+    const data = await dbPost("import", { state: state, replace: !!replace });
+    dbInfo = Object.assign({}, dbInfo, { stats: data.stats });
+    renderStorage();
+    toast("Saved " + storageCount(data.stats.companies) + " companies to the database");
+  } catch (err) {
+    toast("Save failed: " + err.message, "err", 9000);
+  } finally {
+    if (button) { button.disabled = false; button.textContent = original; }
+  }
+}
+
+/* Pull the database back into the browser. This is the disaster-recovery path,
+   so it replaces localStorage wholesale rather than merging -- a merge would
+   resurrect stale cards that the database no longer has. */
+async function restoreFromDatabase() {
+  if (!dbInfo.available) return;
+  if (!confirm("Replace everything in this browser with the contents of the " +
+               "database?\n\nAny batches loaded here but not in the database " +
+               "will be lost.")) return;
+
+  const button = $("#btnDbRestore");
+  if (button) button.disabled = true;
+  try {
+    const data = await dbGet("export");
+    const restored = data.state;
+    if (!restored || !restored.batches) throw new Error("database returned no state");
+
+    const keptDetails = Object.assign({}, state.details);
+    const keptApify = state.apify;   // token stays local, never restored
+
+    state = Object.assign(blankState(), restored, {
+      details: Object.assign(blankState().details, keptDetails),
+      apify: keptApify,
+      ui: state.ui
+    });
+
+    hydrateInputs();
+    renderChips();
+    saveNow();
+    render();
+    updateTemplateNote();
+    loadBatches();
+    renderStorage();
+    const count = Object.keys(restored.batches).length;
+    toast("Restored " + storageCount(count) + " batches from the database");
+  } catch (err) {
+    toast("Restore failed: " + err.message, "err", 9000);
+  } finally {
+    if (button) button.disabled = false;
+  }
 }
 
 /* ------------------------------------------------------- the email ladder */
@@ -1608,11 +1873,23 @@ function wire() {
   $("#btnApifyTest").addEventListener("click", apifyTest);
   $("#btnApifyRun").addEventListener("click", apifyRun);
 
-  // Reset everything.
+  // Local database. Guarded, because these elements only exist in the storage
+  // card and that markup could be stripped by a browser extension.
+  if ($("#btnDbSave")) $("#btnDbSave").addEventListener("click", () => saveToDatabase(false));
+  if ($("#btnDbRestore")) $("#btnDbRestore").addEventListener("click", restoreFromDatabase);
+  if ($("#btnDbRefresh")) $("#btnDbRefresh").addEventListener("click", refreshStorageStats);
+
+  // Reset everything. Clears the browser copy only -- the local database is a
+  // separate record and is deliberately left alone, so the reset text has to
+  // say so or it reads as if nothing was really thrown away.
   $("#btnReset").addEventListener("click", () => {
+    const alsoDb = dbInfo.available
+      ? "\n\nYour local database is NOT touched by this, so you can restore " +
+        "from it afterwards."
+      : "";
     if (!confirm("Delete all ApplyOnce data from this browser?\n\n" +
       "This clears your details, template, loaded batches, sent marks and " +
-      "Apify token. It cannot be undone.")) return;
+      "Apify token. It cannot be undone." + alsoDb)) return;
     try { localStorage.removeItem(STORE_KEY); } catch (err) { /* ignore */ }
     state = blankState();
     hydrateInputs();
@@ -1626,14 +1903,129 @@ function wire() {
 
 /* -------------------------------------------------------------------- boot */
 
+/* ---------------------------------------------------------------------------
+   Send queue: review and approval.
+
+   This page deliberately cannot transmit anything. Delivery stays in the
+   terminal because it needs credentials that should never reach a browser and a
+   typed confirmation, and because serve.py listens on loopback -- any page the
+   user has open could otherwise reach it. So the division of labour is: read
+   and approve here, send with `python3 mailer.py` in a shell.
+   ------------------------------------------------------------------------ */
+
+const QUEUE_BADGE = {
+  draft: "b-guess", approved: "b-verified", sending: "b-site",
+  sent: "b-sent", skipped: "b-unverified", failed: "b-none"
+};
+
+async function refreshQueue() {
+  if (!dbInfo.available) return;
+  try {
+    const data = await dbGet("queue_list", { limit: 200 });
+    const rows = data.queue || [];
+    const counts = {};
+    rows.forEach(r => { counts[r.status] = (counts[r.status] || 0) + 1; });
+    renderQueue(rows, counts);
+  } catch (err) {
+    toast("Could not read the send queue: " + err.message, "err", 8000);
+  }
+}
+
+function renderQueue(rows, counts) {
+  const list = $("#queueList");
+  if (!list) return;
+  $("#queueActions").style.display = "";
+  $("#queueNote").innerHTML = esc(
+    "Nothing leaves this machine from this page. Approve what you are willing " +
+    "to send, then run mailer.py in a terminal."
+  );
+  $("#queueCounts").textContent = rows.length
+    ? ["draft", "approved", "sent", "skipped", "failed", "sending"]
+        .filter(k => counts[k]).map(k => counts[k] + " " + k).join(" · ")
+    : "empty";
+
+  $("#btnQueueApproveAll").disabled = !counts.draft;
+  $("#btnQueueRefresh").disabled = false;
+
+  if (!rows.length) {
+    list.innerHTML = '<p class="note">Nothing queued yet. Use ' +
+      "<strong>Queue for sending</strong> on a draft, then come back here.</p>";
+    return;
+  }
+
+  list.innerHTML = rows.map(r => {
+    const badge = '<span class="badge ' + (QUEUE_BADGE[r.status] || "b-guess") + '">' +
+                  esc(r.status) + "</span>";
+    const who = "<b>" + esc(r.email) + "</b><span>" +
+      esc(r.company_name || r.company_id || "") +
+      (r.founder_name ? " · " + esc(r.founder_name) : "") + "</span>";
+    const why = r.error
+      ? "<em>" + esc(r.error) + "</em>"
+      : esc(r.subject || "");
+    // Only drafts are actionable. Re-approving a sent row would let it be sent
+    // twice, and skipping one hides the reason it failed.
+    const actions = r.status === "draft"
+      ? '<div class="row tight">' +
+          '<button data-qact="approve" data-id="' + r.id + '">Approve</button>' +
+          '<button data-qact="skip" data-id="' + r.id + '">Skip</button>' +
+        "</div>"
+      : "";
+    return '<div class="qrow' + (r.status === "sent" ? " done" : "") + '">' +
+           badge + '<div class="who">' + who + "</div>" +
+           '<div class="why">' + why + "</div>" + actions + "</div>";
+  }).join("");
+}
+
+async function queueAction(ids, status) {
+  if (!dbInfo.available || !ids.length) return;
+  try {
+    await dbPost("queue_status", { ids: ids, status: status });
+    await refreshQueue();
+    toast(ids.length + " row" + (ids.length === 1 ? "" : "s") + " → " + status);
+  } catch (err) {
+    toast("Could not update the queue: " + err.message, "err", 8000);
+  }
+}
+
+function wireQueue() {
+  const list = $("#queueList");
+  if (!list) return;
+  list.addEventListener("click", event => {
+    const button = event.target.closest("button[data-qact]");
+    if (!button) return;
+    const id = parseInt(button.dataset.id, 10);
+    if (button.dataset.qact === "skip" &&
+        !confirm("Skip this draft?\n\nIt will not be sent, and mailer.py will " +
+                 "keep the reason visible.")) return;
+    queueAction([id], button.dataset.qact === "approve" ? "approved" : "skipped");
+  });
+
+  $("#btnQueueApproveAll").addEventListener("click", async () => {
+    const data = await dbGet("queue_list", { status: "draft", limit: 1000 });
+    const rows = data.queue || [];
+    if (!rows.length) return;
+    if (!confirm("Approve all " + rows.length + " draft" +
+                 (rows.length === 1 ? "?" : "s?") + "\n\nThis does not send " +
+                 "anything. Read the list on the next screen first.")) return;
+    queueAction(rows.map(r => r.id), "approved");
+  });
+
+  $("#btnQueueRefresh").addEventListener("click", refreshQueue);
+}
+
 function boot() {
   renderChips();
   hydrateInputs();
   wire();
+  wireQueue();
 
   render();
   updateTemplateNote();
   loadBatches();
+
+  // Feature-detect local storage after first paint, so a slow or absent
+  // /healthz never delays the app becoming usable.
+  probeStorage();
 }
 
 if (document.readyState === "loading") {

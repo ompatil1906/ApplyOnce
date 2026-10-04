@@ -12,6 +12,12 @@ data/
 *.csv
 !vercel.json
 
+# The local SQLite database, plus the WAL/SHM sidecars SQLite creates alongside
+# it. This file holds your research and your send log -- never commit it.
+*.db
+*.db-wal
+*.db-shm
+
 # Secrets — never commit an Apify token
 .env
 .env.*
